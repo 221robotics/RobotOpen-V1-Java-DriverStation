@@ -84,12 +84,17 @@ public class ROJoystickHandler extends Observable {
 	                    
 	                    // Return as byte
 	                    exportValues[currentIndex++] = (byte)(int)analogVal;
+	                    
+	                    System.out.print("C" + j + ":" + (int)mapValue(components[j].getPollData(), -1, 1, 0, 255) + " ");
 	                }
 	                else {
 	                    // Return as byte
 	                    exportValues[currentIndex++] = (byte)(int)(components[j].getPollData() * 255);
+	                    
+	                    System.out.print("C" + j + ":" + (int)(components[j].getPollData() * 255) + " ");
 	                }
 	            }
+	            System.out.println("");
 	        }
 	        
 	        return exportValues;
