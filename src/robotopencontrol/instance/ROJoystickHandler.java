@@ -12,12 +12,12 @@ public class ROJoystickHandler extends Observable {
     // Stores all of the controllers currently connected
     private Controller[] controllers;
     // Stores all active joysticks
-    ArrayList<Controller> activeControllers;
+    ArrayList<JInputController> activeControllers;
    
     // Our constructor for the ROJoystickHandler object
     public ROJoystickHandler() {
         controllers = null;
-        activeControllers = new ArrayList<Controller>();
+        activeControllers = new ArrayList<JInputController>();
     }
     
     // Loop through controller array
@@ -41,7 +41,7 @@ public class ROJoystickHandler extends Observable {
     public void activateController(int controllerIndex) {
         try {
         	if (!activeControllers.contains(controllers[controllerIndex]))
-        		activeControllers.add(controllers[controllerIndex]);
+        		activeControllers.add(new JInputController(controllers[controllerIndex]));
         }
         catch (Exception e) {
         	System.exit(0);
@@ -50,7 +50,7 @@ public class ROJoystickHandler extends Observable {
     
     public void clearControllers() {
         // Reset the ArrayList
-        activeControllers = new ArrayList<Controller>();
+        activeControllers = new ArrayList<JInputController>();
     }
     
     public byte[] exportValues() {
@@ -59,7 +59,7 @@ public class ROJoystickHandler extends Observable {
 	        int currentIndex = 0;
 	        
 	        for (int i = 0; i < activeControllers.size(); i++) {
-	            Controller indexedController = activeControllers.get(i);
+	        	JInputController indexedController = activeControllers.get(i);
 	            
 	            boolean success = indexedController.poll();
 	            
@@ -68,28 +68,52 @@ public class ROJoystickHandler extends Observable {
 	            	System.exit(0);
 	            }
 	            
-	            Component[] components = indexedController.getComponents();
-	            
 	            // Set the length of the bundle
-	            exportValues[currentIndex++] = (byte)(int)(components.length + 1);
+	            exportValues[currentIndex++] = (byte)18;
 	            
 	            // Set the bundleID
 	        	exportValues[currentIndex++] = (byte)(48 + i);
-	            
-	            // Return an ArrayList with the values from the joystick
-	            for (int j=0;j<components.length;j++) {
-	                if (components[j].isAnalog()) {
-	                    // We need to convert this value to something between 0 and 255
-	                    float analogVal = mapValue(components[j].getPollData(), -1, 1, 0, 255);
-	                    
-	                    // Return as byte
-	                    exportValues[currentIndex++] = (byte)(int)analogVal;
-	                }
-	                else {
-	                    // Return as byte
-	                    exportValues[currentIndex++] = (byte)(int)(components[j].getPollData() * 255);
-	                }
-	            }
+	        	
+	        	if (indexedController.getName().toLowerCase().indexOf("xbox") == -1 && !indexedController.getName().equalsIgnoreCase("controller")) {
+	        		// Assume logitech style controller
+	        		exportValues[currentIndex++] = (byte)indexedController.getXAxisValue();		// ANALOG_LEFTX
+	        		exportValues[currentIndex++] = (byte)indexedController.getYAxisValue(); 	// ANALOG_LEFTY
+	        		exportValues[currentIndex++] = (byte)indexedController.getZAxisValue();		// ANALOG_RIGHTX
+	        		exportValues[currentIndex++] = (byte)indexedController.getRZAxisValue();	// ANALOG_RIGHTY
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(10);		// LEFT_ANALOG_BTN
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(11);		// RIGHT_ANALOG_BTN
+	        		exportValues[currentIndex++] = (byte)indexedController.getPov();			// DPAD
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(0);		// BTN1
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(1);		// BTN2
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(2);		// BTN3
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(3);		// BTN4
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(4);		// BTN5
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(5);		// BTN6
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(6);		// BTN7
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(7);		// BTN8
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(8);		// BTN9
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(9);		// BTN10
+	        	}
+	        	else {
+	        		// TODO: Xbox controller
+	        		exportValues[currentIndex++] = (byte)indexedController.getXAxisValue();		// ANALOG_LEFTX
+	        		exportValues[currentIndex++] = (byte)indexedController.getYAxisValue(); 	// ANALOG_LEFTY
+	        		exportValues[currentIndex++] = (byte)indexedController.getRXAxisValue();		// ANALOG_RIGHTX
+	        		exportValues[currentIndex++] = (byte)indexedController.getRYAxisValue();	// ANALOG_RIGHTY
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(10);		// LEFT_ANALOG_BTN
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(11);		// RIGHT_ANALOG_BTN
+	        		exportValues[currentIndex++] = (byte)indexedController.getPov();			// DPAD
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(0);		// BTN1
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(1);		// BTN2
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(2);		// BTN3
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(3);		// BTN4
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(4);		// BTN5
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(5);		// BTN6
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(6);		// BTN7
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(7);		// BTN8
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(8);		// BTN9
+	        		exportValues[currentIndex++] = (byte)indexedController.getButton(9);		// BTN10
+	        	}
 	        }
 	        
 	        return exportValues;
@@ -105,8 +129,8 @@ public class ROJoystickHandler extends Observable {
 	    	int sizeReturn = 0;
 	       
 	        for (int i = 0; i < activeControllers.size(); i++) {
-	        	// The +2 is the length byte and bundle ID before each bundle
-	            sizeReturn += activeControllers.get(i).getComponents().length + 2;
+	        	// The fixed component siez of 17, +2 is the length byte and bundle ID before each bundle
+	            sizeReturn += 19;
 	        }
 	        
 	        return sizeReturn;
@@ -117,9 +141,7 @@ public class ROJoystickHandler extends Observable {
         }
     }
     
-    private float mapValue(float input, float inMin, float inMax, float outMin, float outMax) {
-        return (input - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-    }
+    
     
     public boolean controllersActive() {
     	try {
