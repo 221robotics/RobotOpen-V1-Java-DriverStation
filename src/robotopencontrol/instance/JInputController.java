@@ -117,7 +117,8 @@ class JInputController {
 				// no account for POV yet
 				// pov.add(sourceAxes[i]);
 			} else {
-				axesValue[axesCount] = sourceAxis.getPollData();
+				sourceAxis.getPollData();
+				axesValue[axesCount] = 0;
 				if ( sourceAxis.getIdentifier().equals(Axis.X) ) {
 					xaxis = axesCount;
 				}
