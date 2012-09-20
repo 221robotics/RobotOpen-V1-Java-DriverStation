@@ -179,10 +179,15 @@ class JInputController {
 	 * @see org.lwjgl.input.Controller#isButtonPressed(int)
 	 */
 	public int getButton(int index) {
-		if (buttonState[index])
-			return 255;
-		else
+		try {
+			if (buttonState[index])
+				return 255;
+			else
+				return 0;
+		} catch (Exception e) {
+			// this index doesn't exist, return 0;
 			return 0;
+		}
 	}
 
 	/*
