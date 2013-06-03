@@ -1,6 +1,7 @@
 package robotopencontrol.instance;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 
 import net.java.games.input.*;
@@ -67,103 +68,31 @@ public class ROJoystickHandler extends Observable {
 	            if (!success) {
 	            	System.exit(0);
 	            }
-	            
-	            // Set the length of the bundle
-	            exportValues[currentIndex++] = (byte)18;
-	            
-	            // Set the bundleID
-	        	exportValues[currentIndex++] = (byte)(48 + i);
-	        	
-	        	if (indexedController.getName().toLowerCase().indexOf("xbox") == -1 && !indexedController.getName().equalsIgnoreCase("controller")) {
-	        		// Assume logitech style controller
-	        		exportValues[currentIndex++] = (byte)indexedController.getXAxisValue();		// ANALOG_LEFTX
-	        		exportValues[currentIndex++] = (byte)indexedController.getYAxisValue(); 	// ANALOG_LEFTY
-	        		exportValues[currentIndex++] = (byte)indexedController.getZAxisValue();		// ANALOG_RIGHTX
-	        		exportValues[currentIndex++] = (byte)indexedController.getRZAxisValue();	// ANALOG_RIGHTY
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(10);		// LEFT_ANALOG_BTN
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(11);		// RIGHT_ANALOG_BTN
-	        		exportValues[currentIndex++] = (byte)indexedController.getPov();			// DPAD
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(0);		// BTN1
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(1);		// BTN2
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(2);		// BTN3
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(3);		// BTN4
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(4);		// BTN5
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(5);		// BTN6
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(6);		// BTN7
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(7);		// BTN8
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(8);		// BTN9
-	        		exportValues[currentIndex++] = (byte)indexedController.getButton(9);		// BTN10
-	        	}
-	        	else {
-	        		if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
-	        			// os x implementation
-	        			exportValues[currentIndex++] = (byte)indexedController.getXAxisValue();						// ANALOG_LEFTX
-		        		exportValues[currentIndex++] = (byte)indexedController.getYAxisValue(); 					// ANALOG_LEFTY
-		        		exportValues[currentIndex++] = (byte)indexedController.getRXAxisValue();					// ANALOG_RIGHTX
-		        		exportValues[currentIndex++] = (byte)indexedController.getRYAxisValue();					// ANALOG_RIGHTY
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(6);						// LEFT_ANALOG_BTN
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(7);						// RIGHT_ANALOG_BTN
-		        		if (indexedController.getButton(0) == 255 && indexedController.getButton(2) == 255)			// DPAD
-		        			exportValues[currentIndex++] = (byte)31;
-		        		else if (indexedController.getButton(1) == 255 && indexedController.getButton(2) == 255)
-		        			exportValues[currentIndex++] = (byte)223;
-		        		else if (indexedController.getButton(0) == 255 && indexedController.getButton(3) == 255)
-		        			exportValues[currentIndex++] = (byte)95;
-		        		else if (indexedController.getButton(1) == 255 && indexedController.getButton(3) == 255)
-		        			exportValues[currentIndex++] = (byte)159;
-		        		else if (indexedController.getButton(0) == 255)
-		        			exportValues[currentIndex++] = (byte)63;
-		        		else if (indexedController.getButton(1) == 255)
-		        			exportValues[currentIndex++] = (byte)191;
-		        		else if (indexedController.getButton(2) == 255)
-		        			exportValues[currentIndex++] = (byte)255;
-		        		else if (indexedController.getButton(3) == 255)
-		        			exportValues[currentIndex++] = (byte)127;
-		        		else
-		        			exportValues[currentIndex++] = (byte)0;
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(11);		// BTN1
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(12);		// BTN2
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(13);		// BTN3
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(14);		// BTN4
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(8);		// BTN5
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(9);		// BTN6
-		        		if (indexedController.getZAxisValue() > 127)								// BTN7
-		        			exportValues[currentIndex++] = (byte)255;
-		        		else
-		        			exportValues[currentIndex++] = (byte)0;
-		        		if (indexedController.getRZAxisValue() > 127)								// BTN8
-		        			exportValues[currentIndex++] = (byte)255;
-		        		else
-		        			exportValues[currentIndex++] = (byte)0;
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(5);		// BTN9
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(4);		// BTN10
-	        		} else {
-	        			// windows implementation
-	        			exportValues[currentIndex++] = (byte)indexedController.getXAxisValue();		// ANALOG_LEFTX
-		        		exportValues[currentIndex++] = (byte)indexedController.getYAxisValue(); 	// ANALOG_LEFTY
-		        		exportValues[currentIndex++] = (byte)indexedController.getRXAxisValue();	// ANALOG_RIGHTX
-		        		exportValues[currentIndex++] = (byte)indexedController.getRYAxisValue();	// ANALOG_RIGHTY
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(8);		// LEFT_ANALOG_BTN
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(9);		// RIGHT_ANALOG_BTN
-		        		exportValues[currentIndex++] = (byte)indexedController.getPov();			// DPAD
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(0);		// BTN1
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(1);		// BTN2
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(2);		// BTN3
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(3);		// BTN4
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(4);		// BTN5
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(5);		// BTN6
-		        		if (indexedController.getZAxisValue() > 127)								// BTN7
-		        			exportValues[currentIndex++] = (byte)255;
-		        		else
-		        			exportValues[currentIndex++] = (byte)0;
-		        		if (indexedController.getZAxisValue() < 127)								// BTN8
-		        			exportValues[currentIndex++] = (byte)255;
-		        		else
-		        			exportValues[currentIndex++] = (byte)0;
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(6);		// BTN9
-		        		exportValues[currentIndex++] = (byte)indexedController.getButton(7);		// BTN10
-	        		}
-	        	}
+	           
+	        	exportValues[currentIndex++] = (byte)indexedController.getAxisValue(1);
+                        exportValues[currentIndex++] = (byte)indexedController.getAxisValue(2);
+                        exportValues[currentIndex++] = (byte)indexedController.getAxisValue(4);
+                        exportValues[currentIndex++] = (byte)indexedController.getAxisValue(5);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(0);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(1);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(2);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(3);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(4);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(5);
+                        exportValues[currentIndex++] = (byte)0;
+                        exportValues[currentIndex++] = (byte)0;
+                        exportValues[currentIndex++] = (byte)indexedController.getPov();
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(9);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(10);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(11);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(12);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(13);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(14);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(15);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(16);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(17);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(18);
+                        exportValues[currentIndex++] = (byte)indexedController.getButton(19);
 	        }
 	        
 	        return exportValues;
@@ -180,7 +109,7 @@ public class ROJoystickHandler extends Observable {
 	       
 	        for (int i = 0; i < activeControllers.size(); i++) {
 	        	// The fixed component siez of 17, +2 is the length byte and bundle ID before each bundle
-	            sizeReturn += 19;
+	            sizeReturn += 24;
 	        }
 	        
 	        return sizeReturn;

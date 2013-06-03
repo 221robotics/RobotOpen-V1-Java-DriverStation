@@ -94,7 +94,7 @@ public class ROUI extends JFrame implements Observer,ItemListener,KeyListener {
         joy2Selection.setModel(new javax.swing.DefaultComboBoxModel(joys));
         joy2Selection.addItemListener(this);
 
-        jIPField.setText("192.168.1.22");
+        jIPField.setText("10.0.0.22");
 
         jConnectBtn.setText("Connect");
         jConnectBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -189,7 +189,7 @@ public class ROUI extends JFrame implements Observer,ItemListener,KeyListener {
 				joy1Selection.setEnabled(false);
 				joy2Selection.setEnabled(false);
 	            InetAddress.getByName(jIPField.getText());
-	            robotInstance.getPacketTransmitter().setRemoteTarget(jIPField.getText(), 20);
+	            robotInstance.getPacketTransmitter().setRemoteTarget(jIPField.getText(), 2);
 				robotInstance.getPacketTransmitter().beginXmit();
 				jEnableBtn.setEnabled(true);
 				jConnectBtn.setText("Disconnect");

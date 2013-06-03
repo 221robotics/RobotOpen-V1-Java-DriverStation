@@ -30,7 +30,7 @@ public class ROPacketParser {
         
         if (checksum[0] == packetChecksum[0] && checksum[1] == packetChecksum[1] && packetPayload[1] == ROParameters.PROTOCOL_VER) {
             dashboardData.incrementValidRxCount();
-            if (packetPayload[0] == ROMessageTypes.FEEDBACK_PACKET) {
+            if (packetPayload[0] == ROMessageTypes.HEARTBEAT_PACKET) {
                 dashboardData.updateFirmwareVer(packetPayload[3]);
                 dashboardData.updateRobotState(packetPayload[4]);
                 dashboardData.updateUptime(packetPayload[5]);

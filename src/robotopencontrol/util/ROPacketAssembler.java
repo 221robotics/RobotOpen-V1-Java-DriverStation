@@ -15,22 +15,22 @@ import robotopencontrol.instance.ROJoystickHandler;
  */
 public class ROPacketAssembler {
     
-    public static byte[] getXmitBytes(ROJoystickHandler joystickHandler, boolean feedback) {
+    public static byte[] getXmitBytes(ROJoystickHandler joystickHandler, boolean heartbeat) {
     	byte messageType;
-    	if (feedback)
-    		messageType = ROMessageTypes.FEEDBACK_PACKET;
+    	if (heartbeat)
+    		messageType = ROMessageTypes.HEARTBEAT_PACKET;
     	else
     		messageType = ROMessageTypes.CONTROL_PACKET;
     	
-        byte[] header = { messageType, ROParameters.PROTOCOL_VER, ROParameters.DEVICE_ID };
-        if (!feedback) {
+        byte[] header = { messageType };
+        if (!heartbeat) {
         	byte[] joystickPayload = combineByteArrays(header, joystickHandler.exportValues());
         	byte[] checksum = CRC16.genCRC16(joystickPayload);
         	return combineByteArrays(joystickPayload, checksum);
         }
         else {
-        	byte[] checksum = CRC16.genCRC16(header);
-        	return combineByteArrays(header, checksum);
+        	byte[] body = {(byte)0xEE, (byte)0x01};
+        	return combineByteArrays(header, body);
         }
     }
     
